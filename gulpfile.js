@@ -3,6 +3,7 @@ let $           = require('gulp-load-plugins')({ lazy: true });
 let browserSync = require('browser-sync').create();
 let path        = require('path');
 let runSequence = require('run-sequence');
+let webpack      = require('webpack-stream');
 
 let autoprefixerOptions = {
     browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
@@ -52,11 +53,17 @@ gulp.task('pug', () => {
         .pipe(browserSync.stream());
 });
 
+gulp.task('bundle', () => {
+    return gulp.src(SRC_FILES.scripts + 'index.js')
+        .pipe(webpack( require('./webpack.config.js' )))
+        .pipe(gulp.dest(BUILD.html));
+});
+
 gulp.task('watch', () => {
     gulp.watch(SRC_FILES.pug + '**/*.pug', ['pug']);
     gulp.watch(SRC_FILES.sass + '**/*.+(scss|sass)', ['sass']);
 });
 
 gulp.task('default', (cb) => {
-    runSequence(['pug', 'sass'], 'server', 'watch');
+    runSequence(['pug', 'bundle', 'sass'], 'server', 'watch');
 });
