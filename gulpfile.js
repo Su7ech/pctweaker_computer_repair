@@ -4,6 +4,10 @@ let browserSync = require('browser-sync').create();
 let path        = require('path');
 let runSequence = require('run-sequence');
 
+let autoprefixerOptions = {
+    browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
+};
+
 const SASS_INCLUDES = [
     path.join(__dirname, '/node_modules/bootstrap-sass/assets/stylesheets/'),
     path.join(__dirname, '/node_modules/normalize-scss/fork-versions/default/')
@@ -33,6 +37,7 @@ gulp.task('sass', () => {
         .pipe($.sass({
             includePaths: SASS_INCLUDES
         }).on('error', $.sass.logError))
+        .pipe($.autoprefixer(autoprefixerOptions))
         .pipe($.sourcemaps.write(BUILD.css))
         .pipe(gulp.dest(BUILD.css))
         .pipe(browserSync.stream());
