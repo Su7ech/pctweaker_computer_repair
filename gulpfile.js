@@ -53,12 +53,6 @@ gulp.task('pug', () => {
         .pipe(browserSync.stream());
 });
 
-gulp.task('bundle', () => {
-    return gulp.src(SRC_FILES.scripts + 'index.js')
-        .pipe(webpack( require('./webpack.config.js' )))
-        .pipe(gulp.dest(BUILD.html));
-});
-
 gulp.task('watch', () => {
     gulp.watch(SRC_FILES.pug + '**/*.pug', ['pug']);
     gulp.watch(SRC_FILES.sass + '**/*.+(scss|sass)', ['sass']);
