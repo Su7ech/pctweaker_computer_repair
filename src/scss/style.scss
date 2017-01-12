@@ -1,3 +1,5 @@
-// vendor imports
-@import "normalize";
-@import "bootstrap";
+// Normalize
+@import "utilities/normalize";
+
+// Bootstrap
+@import "../vendors/bootstrap/stylesheets/bootstrap";
