@@ -60,6 +60,7 @@ gulp.task('concat', () => {
             SRC_FILES.vendor + 'jquery/jquery.js',
             SRC_FILES.vendor + 'bootstrap/javascripts/bootstrap.js'
         ])
+        .pipe($.newer(BUILD.js + 'script.js'))
         .pipe($.sourcemaps.init())
         .pipe($.concat('script.js'))
         .pipe($.sourcemaps.write(BUILD.js))
@@ -70,6 +71,7 @@ gulp.task('concat', () => {
 gulp.task('watch', () => {
     gulp.watch(SRC_FILES.pug + '**/*.pug', ['pug']);
     gulp.watch(SRC_FILES.sass + '**/*.+(scss|sass)', ['sass']);
+    gulp.watch([SRC_FILES.scripts + '**/*.js', BUILD.js + 'script.js'], browserSync.reload);
 });
 
 gulp.task('default', (cb) => {
