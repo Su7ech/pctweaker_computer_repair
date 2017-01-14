@@ -1,9 +1,10 @@
+/* */
+
 let gulp        = require('gulp');
 let $           = require('gulp-load-plugins')({ lazy: true });
 let browserSync = require('browser-sync').create();
 let path        = require('path');
 let runSequence = require('run-sequence');
-let webpack      = require('webpack-stream');
 
 let autoprefixerOptions = {
     browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
@@ -17,12 +18,15 @@ const SRC_FILES = {
     pug: path.join(__dirname, '/src/pug/'),
     sass: path.join(__dirname, '/src/scss/'),
     scripts: path.join(__dirname, '/src/scripts/'),
+    images: path.join(__dirname, '/src/images/'),
     vendor: path.join(__dirname, '/src/vendors/')
 };
 const BUILD = {
     html: path.join(__dirname, '/src/build/'),
     css: path.join(__dirname, '/src/build/css/'),
-    js: path.join(__dirname, '/src/build/js/')
+    js: path.join(__dirname, '/src/build/js/'),
+    images: path.join(__dirname, '/src/build/img/'),
+    fonts: path.join(__dirname, '/src/build/fonts/')
 };
 const SERVER = path.join(__dirname, '/src/build/');
 
@@ -67,13 +71,29 @@ gulp.task('concat', () => {
         .pipe(gulp.dest(BUILD.js));
 });
 
+gulp.task('images', () => {
+    return gulp.src([SRC_FILES.images + '**/*.+(png|jpg|jpeg|gif|svg)'])
+        .pipe($.cache($.imagemin({
+            interlaced: true
+        })))
+        .pipe(gulp.dest(BUILD.images));
+});
+
+gulp.task('fonts', () => {
+    return gulp.src(SRC_FILES.vendor + 'bootstrap/fonts/**')
+        .pipe($.newer(BUILD.fonts))
+        .pipe(gulp.dest(BUILD.fonts));
+});
 
 gulp.task('watch', () => {
     gulp.watch(SRC_FILES.pug + '**/*.pug', ['pug']);
     gulp.watch(SRC_FILES.sass + '**/*.+(scss|sass)', ['sass']);
-    gulp.watch([SRC_FILES.scripts + '**/*.js', BUILD.js + 'script.js'], browserSync.reload);
+    gulp.watch([SRC_FILES.scripts + '**/*.js', 
+        BUILD.js + 'script.js'
+    ], ['concat', browserSync.reload]);
+    gulp.watch(SRC_FILES.images + '**/*.+(png|jpg|jpeg|gif|svg)', ['images', browserSync.reload]);
 });
 
 gulp.task('default', (cb) => {
-    runSequence(['pug', 'concat', 'sass'], 'server', 'watch', cb);
+    runSequence(['pug', 'concat', 'sass', 'images', 'fonts'], 'server', 'watch', cb);
 });
