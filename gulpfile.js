@@ -1,5 +1,3 @@
-/* */
-
 let gulp        = require('gulp');
 let $           = require('gulp-load-plugins')({ lazy: true });
 let browserSync = require('browser-sync').create();
